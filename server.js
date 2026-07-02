@@ -9,7 +9,10 @@
  *   5. 请求频率限制、输入校验、错误脱敏
  */
 
-require('dotenv').config();
+// dotenv 仅在本地开发时加载（Vercel 通过平台注入环境变量）
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const express = require('express');
 const rateLimit = require('express-rate-limit');
@@ -40,8 +43,7 @@ const MAX_MESSAGES_COUNT = 50;
 
 // 至少需要配置一个模型
 if (!FRIDAY_APP_ID && !DEEPSEEK_API_KEY) {
-  console.error('[启动失败] 请至少配置一个模型：FRIDAY_APP_ID 或 DEEPSEEK_API_KEY');
-  process.exit(1);
+  console.error('[警告] 未配置任何模型：请设置 FRIDAY_APP_ID 或 DEEPSEEK_API_KEY');
 }
 
 // ============================================================
@@ -273,21 +275,26 @@ app.get('*', (_req, res) => {
 });
 
 // ============================================================
-// 启动服务
+// 启动服务（仅本地开发时执行，Vercel Serverless 不需要 listen）
 // ============================================================
 
-app.listen(PORT, () => {
-  console.log(`[启动成功] 代理服务运行在 http://localhost:${PORT}`);
-  console.log(`[模型配置]`);
-  if (FRIDAY_APP_ID) {
-    console.log(`  ✅ Friday（备）: ${FRIDAY_APP_ID.slice(0, 6)}...${FRIDAY_APP_ID.slice(-4)} | 模型: ${FRIDAY_MODEL}`);
-  } else {
-    console.log(`  ⚠️ Friday: 未配置`);
-  }
-  if (DEEPSEEK_API_KEY) {
-    console.log(`  ✅ DeepSeek（主）: ${DEEPSEEK_API_KEY.slice(0, 6)}...${DEEPSEEK_API_KEY.slice(-4)}`);
-  } else {
-    console.log(`  ⚠️ DeepSeek: 未配置`);
-  }
-  console.log(`[策略] DeepSeek 优先 → 失败自动切换 Friday`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`[启动成功] 代理服务运行在 http://localhost:${PORT}`);
+    console.log(`[模型配置]`);
+    if (FRIDAY_APP_ID) {
+      console.log(`  ✅ Friday（备）: ${FRIDAY_APP_ID.slice(0, 6)}...${FRIDAY_APP_ID.slice(-4)} | 模型: ${FRIDAY_MODEL}`);
+    } else {
+      console.log(`  ⚠️ Friday: 未配置`);
+    }
+    if (DEEPSEEK_API_KEY) {
+      console.log(`  ✅ DeepSeek（主）: ${DEEPSEEK_API_KEY.slice(0, 6)}...${DEEPSEEK_API_KEY.slice(-4)}`);
+    } else {
+      console.log(`  ⚠️ DeepSeek: 未配置`);
+    }
+    console.log(`[策略] DeepSeek 优先 → 失败自动切换 Friday`);
+  });
+}
+
+// 导出 app 供 Vercel Serverless 使用
+module.exports = app;
