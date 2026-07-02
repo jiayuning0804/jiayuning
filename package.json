@@ -1,0 +1,21 @@
+{
+  "name": "ip-recommender-server",
+  "version": "1.0.0",
+  "description": "体竞游IP合作推荐工具 — 后端代理服务，安全转发 DeepSeek API 请求",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["ip-recommender", "deepseek", "proxy"],
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
