@@ -38,7 +38,7 @@ function debounce(fn, delay = 200) {
 }
 
 // ===== 大模型 API 调用（通过后端代理，含 AbortController 超时）=====
-async function callLLM(messages, timeoutMs = 30000) {
+async function callLLM(messages, timeoutMs = 90000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {

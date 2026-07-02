@@ -35,7 +35,7 @@ const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 const DEEPSEEK_MODEL = 'deepseek-chat';
 
 // 请求超时时间（毫秒）
-const REQUEST_TIMEOUT_MS = 30_000;
+const REQUEST_TIMEOUT_MS = 60_000;
 // 单条 message 内容最大长度
 const MAX_MESSAGE_CONTENT_LENGTH = 10_000;
 // messages 数组最大长度
