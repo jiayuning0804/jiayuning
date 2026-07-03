@@ -90,6 +90,12 @@ const DB = {
       const raw = localStorage.getItem('ai_config');
       if (raw) {
         const saved = JSON.parse(raw);
+        // 提示词版本不匹配时，强制使用最新 systemPrompt
+        if (!saved.promptVersion || saved.promptVersion !== PROMPT_VERSION) {
+          saved.systemPrompt = DEFAULT_CONFIG.systemPrompt;
+          saved.promptVersion = PROMPT_VERSION;
+          localStorage.setItem('ai_config', JSON.stringify(saved));
+        }
         return {
           ...DEFAULT_CONFIG,
           ...saved,
@@ -120,8 +126,11 @@ const DB = {
 
 // ===== 默认AI配置 =====
 // P2-26: 移除冗余的 apiKey/provider/model，仅保留用户可配置字段
+const PROMPT_VERSION = 2; // 提示词版本号，每次修改 systemPrompt 时递增，自动刷新用户本地旧配置
+
 const DEFAULT_CONFIG = {
   recommendCount: 5,
+  promptVersion: PROMPT_VERSION,
   systemPrompt: `你是一位专业的游戏电竞IP联合营销顾问，服务于美团团购的市场营销团队。
 
 你的任务是：根据用户提供的合作需求，从IP资源库中筛选并推荐最合适的游戏电竞IP，给出专业的推荐理由，为每个IP提供深度价值分析，并结合美团团购业务规划创意合作方案，同时提供真实的合作参考案例。
