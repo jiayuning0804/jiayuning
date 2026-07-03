@@ -48,7 +48,7 @@ async function callLLM(messages, timeoutMs = 90000) {
         model: config.model || BUILTIN_LLM.model,
         messages,
         temperature: 0.3,
-        max_tokens: 2000,
+        max_tokens: 8000,
         response_format: { type: "json_object" }
       }),
       signal: controller.signal

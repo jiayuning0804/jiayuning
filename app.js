@@ -90,7 +90,7 @@ async function callLLM(messages, timeoutMs = 90000) {
         model: config.model || BUILTIN_LLM.model,
         messages,
         temperature: 0.3,
-        max_tokens: 2000,
+        max_tokens: 8000,
         response_format: { type: "json_object" }
       }),
       signal: controller.signal
@@ -287,6 +287,25 @@ function recommendResultToText(result) {
     if (rec.category) lines.push(`   品类：${rec.category}`);
     if (rec.tags && rec.tags.length) lines.push(`   标签：${rec.tags.join('、')}`);
     if (rec.reason) lines.push(`   理由：${rec.reason}`);
+    if (rec.analysis) {
+      if (rec.analysis.users) lines.push(`   👥 用户画像：${rec.analysis.users}`);
+      if (rec.analysis.spending) lines.push(`   💰 消费力：${rec.analysis.spending}`);
+      if (rec.analysis.value) lines.push(`   💡 价值洞察：${rec.analysis.value}`);
+    }
+    if (rec.integration) lines.push(`   🔗 业务结合：${rec.integration}`);
+    if (rec.proposals && rec.proposals.length) {
+      rec.proposals.forEach((p, j) => {
+        lines.push(`   🎯 方案${j + 1}：${p.title || ''}`);
+        if (p.direction) lines.push(`      ${p.direction}`);
+      });
+    }
+    if (rec.cases && rec.cases.length) {
+      rec.cases.forEach(c => {
+        lines.push(`   📋 案例：${c.title || ''}`);
+        if (c.form) lines.push(`      形式：${c.form}`);
+        if (c.effect) lines.push(`      效果：${c.effect}`);
+      });
+    }
     const matched = ipList.find(ip => ip.name && rec.name && ip.name.trim() === rec.name.trim());
     if (matched && matched.opinion) lines.push(`   💬 个人意见：${matched.opinion}`);
     lines.push('');
@@ -340,6 +359,33 @@ function renderRecommendResult(result) {
       ? `<div class="ip-card-opinion"><span class="opinion-label">💬 个人意见</span><span class="opinion-text">${escHtml(matched.opinion)}</span></div>`
       : '';
 
+    // IP深度分析渲染
+    let analysisHtml = '';
+    if (rec.analysis && (rec.analysis.users || rec.analysis.spending || rec.analysis.value)) {
+      const analysisItems = [];
+      if (rec.analysis.users) analysisItems.push(`<div class="analysis-row"><span class="analysis-icon">👥</span><span class="analysis-label">用户画像</span><span class="analysis-text">${escHtml(rec.analysis.users)}</span></div>`);
+      if (rec.analysis.spending) analysisItems.push(`<div class="analysis-row"><span class="analysis-icon">💰</span><span class="analysis-label">消费力</span><span class="analysis-text">${escHtml(rec.analysis.spending)}</span></div>`);
+      if (rec.analysis.value) analysisItems.push(`<div class="analysis-row"><span class="analysis-icon">💡</span><span class="analysis-label">价值洞察</span><span class="analysis-text">${escHtml(rec.analysis.value)}</span></div>`);
+      analysisHtml = `<div class="ip-card-analysis"><div class="analysis-header">📊 IP深度分析</div>${analysisItems.join('')}</div>`;
+    }
+
+    // 美团团购业务结合方向
+    let integrationHtml = '';
+    if (rec.integration) {
+      integrationHtml = `<div class="ip-card-integration"><span class="integration-icon">🔗</span><span class="integration-label">美团业务结合</span><span class="integration-text">${escHtml(rec.integration)}</span></div>`;
+    }
+
+    // 创意合作方案
+    let proposalsHtml = '';
+    if (rec.proposals && rec.proposals.length > 0) {
+      const proposalItems = rec.proposals.map((p, j) => `
+        <div class="proposal-item">
+          <div class="proposal-title"><span class="proposal-num">方案${j + 1}</span>${escHtml(p.title || '')}</div>
+          ${p.direction ? `<div class="proposal-direction">${escHtml(p.direction)}</div>` : ''}
+        </div>`).join('');
+      proposalsHtml = `<div class="ip-card-proposals"><div class="proposals-header">🎯 创意合作方案</div>${proposalItems}</div>`;
+    }
+
     // 合作参考案例渲染
     let casesHtml = '';
     if (rec.cases && rec.cases.length > 0) {
@@ -374,6 +420,9 @@ function renderRecommendResult(result) {
         </div>
         ${tags ? `<div class="ip-card-tags">${tags}</div>` : ''}
         <div class="ip-card-reason">${escHtml(rec.reason || '')}</div>
+        ${analysisHtml}
+        ${integrationHtml}
+        ${proposalsHtml}
         ${casesHtml}
         ${opinionHtml}
       </div>`;

@@ -680,6 +680,141 @@ body.resizing {
   color: #1d4ed8;
 }
 
+/* IP深度分析 */
+.ip-card-analysis {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+}
+
+.analysis-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 10px;
+}
+
+.analysis-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 5px 0;
+  border-bottom: 1px dashed #dbeafe;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.analysis-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.analysis-icon {
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+.analysis-label {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #1e3a5f;
+  min-width: 56px;
+}
+
+.analysis-text {
+  color: var(--text-sub);
+  flex: 1;
+}
+
+/* 美团业务结合 */
+.ip-card-integration {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.integration-icon {
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+.integration-label {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #c2410c;
+  min-width: 80px;
+}
+
+.integration-text {
+  color: var(--text-sub);
+  flex: 1;
+}
+
+/* 创意合作方案 */
+.ip-card-proposals {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+}
+
+.proposals-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7e22ce;
+  margin-bottom: 10px;
+}
+
+.proposal-item {
+  padding: 8px 0;
+  border-bottom: 1px dashed #f3e8ff;
+}
+
+.proposal-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.proposal-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.proposal-num {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.proposal-direction {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.7;
+  padding-left: 4px;
+}
+
 /* 个人意见（内联在推荐卡片内） */
 .ip-card-opinion {
   margin-top: 10px;
