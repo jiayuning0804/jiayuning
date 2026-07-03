@@ -1,0 +1,28 @@
+# ⚠️ 安全提醒：本项目的 data.js 里内置了 DeepSeek API Key。
+# 如果上传到【公开】仓库（如 GitHub 公开仓库 / GitHub Pages），
+# 任何人都能在源码里看到这个 Key 并盗刷你的额度！
+#
+# 上传公开仓库前，请务必：
+#   1. 确认仓库设为 Private（私有），或
+#   2. 把 data.js 里的 apiKey 临时去掉再提交。
+#
+# 下面列出的是不需要提交的本地/临时文件。
+
+# 系统/编辑器
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# 临时/构建产物
+node_modules/
+dist/
+*.tmp
+*.bak
+
+# 浏览器自动化产生的状态/截图
+auth.json
+*.png
+*.webm
+trace.json

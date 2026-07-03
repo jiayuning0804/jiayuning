@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>体竞游IP合作</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边导航 -->
+    <nav class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🎮</span>
+        <span class="logo-text">体竞游IP合作</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item active" data-page="recommend">
+          <span class="nav-icon">✨</span>
+          <span>智能匹配</span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- IP推荐页 -->
+      <div id="page-recommend" class="page active">
+        <div class="page-header">
+          <h1>智能匹配</h1>
+          <p class="page-desc">填写合作需求，AI将为你匹配最合适的体竞游IP</p>
+        </div>
+        <div class="recommend-layout">
+          <!-- 步骤1：需求表单（全屏居中） -->
+          <div class="form-panel" id="step-form">
+            <h2 class="panel-title">填写需求</h2>
+            <form id="recommend-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>预算范围</label>
+                  <div class="multiselect" data-name="budget" data-placeholder="请选择预算范围" data-single="true">
+                    <button type="button" class="ms-trigger">
+                      <span class="ms-label placeholder">请选择预算范围</span>
+                      <span class="ms-arrow">▾</span>
+                    </button>
+                    <div class="ms-panel">
+                      <label class="ms-option"><input type="radio" name="budget" value="10万以下" /><span>10万以下</span></label>
+                      <label class="ms-option"><input type="radio" name="budget" value="10-50万" /><span>10-50万</span></label>
+                      <label class="ms-option"><input type="radio" name="budget" value="50-100万" /><span>50-100万</span></label>
+                      <label class="ms-option"><input type="radio" name="budget" value="100-500万" /><span>100-500万</span></label>
+                      <label class="ms-option"><input type="radio" name="budget" value="500万以上" /><span>500万以上</span></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>目标用户群体 <span class="optional">（可多选）</span></label>
+                  <div class="multiselect" data-name="target" data-placeholder="请选择目标用户群体">
+                    <button type="button" class="ms-trigger">
+                      <span class="ms-label placeholder">请选择目标用户群体</span>
+                      <span class="ms-arrow">▾</span>
+                    </button>
+                    <div class="ms-panel">
+                      <label class="ms-option"><input type="checkbox" name="target" value="Z世代(18-25岁)" /><span>Z世代(18-25岁)</span></label>
+                      <label class="ms-option"><input type="checkbox" name="target" value="年轻白领(25-35岁)" /><span>年轻白领(25-35岁)</span></label>
+                      <label class="ms-option"><input type="checkbox" name="target" value="学生群体" /><span>学生群体</span></label>
+                      <label class="ms-option"><input type="checkbox" name="target" value="男性用户为主" /><span>男性用户为主</span></label>
+                      <label class="ms-option"><input type="checkbox" name="target" value="女性用户为主" /><span>女性用户为主</span></label>
+                      <label class="ms-option"><input type="checkbox" name="target" value="泛大众用户" /><span>泛大众用户</span></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>游戏品类偏好 <span class="optional">（可多选）</span></label>
+                  <div class="multiselect" data-name="category" data-placeholder="请选择游戏品类偏好">
+                    <button type="button" class="ms-trigger">
+                      <span class="ms-label placeholder">请选择游戏品类偏好</span>
+                      <span class="ms-arrow">▾</span>
+                    </button>
+                    <div class="ms-panel">
+                      <label class="ms-option"><input type="checkbox" name="category" value="MOBA(王者/英雄联盟)" /><span>MOBA(王者/英雄联盟)</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="FPS(无畏契约/CS)" /><span>FPS(无畏契约/CS)</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="手游" /><span>手游</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="端游" /><span>端游</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="二次元游戏" /><span>二次元游戏</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="电竞赛事" /><span>电竞赛事</span></label>
+                      <label class="ms-option"><input type="checkbox" name="category" value="不限品类" /><span>不限品类</span></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>合作场景 <span class="optional">（可多选）</span></label>
+                  <div class="multiselect" data-name="scene" data-placeholder="请选择合作场景">
+                    <button type="button" class="ms-trigger">
+                      <span class="ms-label placeholder">请选择合作场景</span>
+                      <span class="ms-arrow">▾</span>
+                    </button>
+                    <div class="ms-panel">
+                      <label class="ms-option"><input type="checkbox" name="scene" value="线下活动/快闪" /><span>线下活动/快闪</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="线上推广/社媒传播" /><span>线上推广/社媒传播</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="联名产品/周边" /><span>联名产品/周边</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="赛事冠名/赞助" /><span>赛事冠名/赞助</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="KA商户联动" /><span>KA商户联动</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="买赠/权益合作" /><span>买赠/权益合作</span></label>
+                      <label class="ms-option"><input type="checkbox" name="scene" value="TVC/内容共创" /><span>TVC/内容共创</span></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>补充说明 <span class="optional">（选填）</span></label>
+                <textarea name="extra" id="extra" placeholder="例如：希望IP有较强的女性用户基础，合作档期在Q3，品牌调性偏年轻潮流…" rows="3"></textarea>
+              </div>
+              <button type="submit" class="btn-primary" id="submit-btn">
+                <span class="btn-text">✨ 开始推荐</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- 步骤2：结果面板（提交后显示） -->
+          <div class="result-panel" id="step-result">
+            <button type="button" class="back-to-form" id="back-to-form-btn">← 返回修改需求</button>
+            <h2 class="panel-title">推荐结果</h2>
+            <div id="result-area" class="result-area">
+              <div class="result-placeholder">
+                <div class="placeholder-icon">🎯</div>
+                <p>填写需求后，AI将为你推荐最合适的IP</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

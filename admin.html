@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>体竞游IP合作 · 管理后台</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边导航 -->
+    <nav class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🛠️</span>
+        <span class="logo-text">管理后台</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item active" data-page="manage">
+          <span class="nav-icon">📋</span>
+          <span>IP管理</span>
+        </li>
+        <li class="nav-item" data-page="config">
+          <span class="nav-icon">⚙️</span>
+          <span>AI配置</span>
+        </li>
+      </ul>
+      <div style="margin-top:auto;padding:16px 20px;">
+        <a href="index.html" class="btn-secondary" style="display:flex;align-items:center;gap:6px;text-decoration:none;justify-content:center;">
+          <span>👁️</span><span>查看用户页</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- 可拖拽分隔条 -->
+    <div class="sidebar-resizer" id="sidebar-resizer"></div>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- IP管理页 -->
+      <div id="page-manage" class="page active">
+        <div class="page-header">
+          <h1>IP管理</h1>
+          <p class="page-desc">管理你的体竞游IP资源库，随时增删改查</p>
+        </div>
+        <div class="manage-toolbar">
+          <button class="btn-primary" id="add-ip-btn">+ 新增IP</button>
+          <button class="btn-secondary" id="export-ip-btn">⬇ 导出IP库</button>
+          <button class="btn-secondary" id="import-ip-btn">⬆ 导入IP库</button>
+          <input type="file" id="import-ip-file" accept="application/json,.json" style="display:none;" />
+          <div class="search-box">
+            <input type="text" id="ip-search" placeholder="搜索IP名称…" />
+          </div>
+        </div>
+        <div id="ip-table-container">
+          <table class="ip-table">
+            <thead>
+              <tr>
+                <th>IP名称</th>
+                <th>游戏品类</th>
+                <th>目标用户</th>
+                <th>预算区间</th>
+                <th>适合场景</th>
+                <th>合作节点</th>
+                <th>IP调性</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="ip-table-body">
+            </tbody>
+          </table>
+          <div id="ip-empty" class="empty-state" style="display:none;">
+            <p>还没有IP数据，点击「新增IP」开始添加</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI配置页 -->
+      <div id="page-config" class="page">
+        <div class="page-header">
+          <h1>AI配置</h1>
+          <p class="page-desc">大模型已内置，无需配置；这里可调试推荐逻辑（提示词、推荐数量）</p>
+        </div>
+        <div class="config-layout">
+          <div class="config-section">
+            <h2 class="section-title">🔑 大模型服务</h2>
+            <div class="config-builtin-note">
+              <p>✅ 大模型已内置，所有同事打开即可直接使用，<strong>无需填写任何密钥</strong>。</p>
+              <p class="hint">当前使用 DeepSeek（deepseek-chat），由本工具统一接入。如需更换模型或密钥，请联系本工具维护人。</p>
+            </div>
+            <button class="btn-secondary" id="test-api-btn">🔍 测试连接</button>
+            <span id="api-test-result" class="test-result"></span>
+          </div>
+
+          <div class="config-section">
+            <h2 class="section-title">🧠 推荐逻辑配置</h2>
+            <div class="form-group">
+              <label>系统提示词（System Prompt）</label>
+              <p class="hint">这里定义AI的角色和推荐逻辑，修改后保存即生效。</p>
+              <textarea id="system-prompt" rows="12"></textarea>
+            </div>
+            <div class="form-group">
+              <label>推荐数量</label>
+              <select id="recommend-count">
+                <option value="3">推荐3个IP</option>
+                <option value="5" selected>推荐5个IP</option>
+                <option value="8">推荐8个IP</option>
+              </select>
+            </div>
+            <div class="config-actions">
+              <button class="btn-primary" id="save-config-btn">💾 保存配置</button>
+              <button class="btn-secondary" id="reset-prompt-btn">↩ 恢复默认提示词</button>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h2 class="section-title">🧪 提示词测试</h2>
+            <p class="hint">用一个示例需求快速测试当前提示词效果</p>
+            <button class="btn-secondary" id="test-prompt-btn">▶ 用示例需求测试</button>
+            <div id="test-result-area" class="test-result-area" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- IP编辑弹窗 -->
+  <div id="ip-modal" class="modal" style="display:none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">新增IP</h3>
+        <button class="modal-close" id="modal-close-btn">✕</button>
+      </div>
+      <form id="ip-form">
+        <input type="hidden" id="ip-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>IP名称 <span class="required">*</span></label>
+            <input type="text" id="ip-name" placeholder="例如：王者荣耀KPL" required />
+          </div>
+          <div class="form-group">
+            <label>游戏品类 <span class="required">*</span></label>
+            <input type="text" id="ip-category" placeholder="例如：MOBA/电竞赛事" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>目标用户</label>
+            <input type="text" id="ip-target" placeholder="例如：Z世代、男性用户为主" />
+          </div>
+          <div class="form-group">
+            <label>预算区间</label>
+            <input type="text" id="ip-budget" placeholder="例如：50-500万" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>适合合作场景</label>
+          <input type="text" id="ip-scene" placeholder="例如：赛事冠名、线下活动、KA商户联动" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>IP调性</label>
+            <input type="text" id="ip-tone" placeholder="例如：竞技热血、年轻潮流" />
+          </div>
+          <div class="form-group">
+            <label>用户规模</label>
+            <input type="text" id="ip-scale" placeholder="例如：月活5000万+" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>IP简介</label>
+          <textarea id="ip-desc" rows="3" placeholder="简要介绍这个IP的特点、优势、合作亮点等…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>合作节点</label>
+          <textarea id="ip-milestones" rows="2" placeholder="例如：立项确认→方案沟通→合同签署→素材对接→活动上线→效果复盘"></textarea>
+        </div>
+        <div class="form-group">
+          <label>合作案例</label>
+          <textarea id="ip-cases" rows="2" placeholder="例如：曾与麦当劳、肯德基等品牌合作，效果良好…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>个人推荐意见 <span class="optional">（选填）</span></label>
+          <textarea id="ip-opinion" rows="3" placeholder="写下你对这个IP的推荐理由、注意事项或合作建议，AI推荐时会自动展示给同事参考"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="modal-cancel-btn">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
