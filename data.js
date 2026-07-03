@@ -126,10 +126,10 @@ const DB = {
 
 // ===== 默认AI配置 =====
 // P2-26: 移除冗余的 apiKey/provider/model，仅保留用户可配置字段
-const PROMPT_VERSION = 2; // 提示词版本号，每次修改 systemPrompt 时递增，自动刷新用户本地旧配置
+const PROMPT_VERSION = 3; // 提示词版本号，每次修改 systemPrompt 时递增，自动刷新用户本地旧配置
 
 const DEFAULT_CONFIG = {
-  recommendCount: 5,
+  recommendCount: 3,
   promptVersion: PROMPT_VERSION,
   systemPrompt: `你是一位专业的游戏电竞IP联合营销顾问，服务于美团团购的市场营销团队。
 
