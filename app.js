@@ -74,6 +74,15 @@ function escHtml(str) {
   return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// ===== 防抖 =====
+function debounce(fn, delay = 200) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 // ===== 大模型 API 调用（P1-6: AbortController 超时 + P2-21: max_tokens + P2-25: response_format）=====
 async function callLLM(messages, timeoutMs = 90000) {
   const controller = new AbortController();
@@ -438,4 +447,142 @@ function renderRecommendResult(result) {
 (function init() {
   DB.getIPs();
   initMultiselects();
+  initCoopPage();
 })();
+
+// ===== 页面导航切换 =====
+document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const page = item.dataset.page;
+    document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('page-' + page).classList.add('active');
+    if (page === 'coop') renderCoopList();
+  });
+});
+
+// ===== 合作追踪页 =====
+const PROGRESS_COLORS = {
+  '初步接触': { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af' },
+  '需求对齐': { bg: '#ecfeff', border: '#a5f3fc', text: '#155e75' },
+  '方案沟通': { bg: '#fefce8', border: '#fde68a', text: '#854d0e' },
+  '合同签署': { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c' },
+  '执行中':   { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534' },
+  '已完成':   { bg: '#f8fafc', border: '#e2e8f0', text: '#475569' },
+  '已暂停':   { bg: '#fef2f2', border: '#fecaca', text: '#991b1b' }
+};
+
+function initCoopPage() {
+  document.getElementById('add-coop-btn').addEventListener('click', () => openCoopModal());
+
+  document.getElementById('coop-modal-close').addEventListener('click', closeCoopModal);
+  document.getElementById('coop-modal-cancel').addEventListener('click', closeCoopModal);
+  document.querySelector('#coop-modal .modal-overlay').addEventListener('click', closeCoopModal);
+
+  document.getElementById('coop-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('coop-id').value;
+    const data = {
+      ipName: document.getElementById('coop-ip-name').value.trim(),
+      ipInfo: document.getElementById('coop-ip-info').value.trim(),
+      authScope: document.getElementById('coop-auth-scope').value.trim(),
+      startDate: document.getElementById('coop-start-date').value,
+      endDate: document.getElementById('coop-end-date').value,
+      progress: document.getElementById('coop-progress').value,
+      note: document.getElementById('coop-note').value.trim()
+    };
+    if (id) {
+      DB.updateCoop(id, data);
+      showToast('合作记录已更新', 'success');
+    } else {
+      DB.addCoop(data);
+      showToast('合作记录已添加', 'success');
+    }
+    closeCoopModal();
+    renderCoopList(document.getElementById('coop-search').value);
+  });
+
+  document.getElementById('coop-search').addEventListener('input', debounce((e) => {
+    renderCoopList(e.target.value);
+  }, 200));
+
+  document.getElementById('coop-list-area').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-coop-action]');
+    if (!btn) return;
+    const id = btn.dataset.coopId;
+    if (btn.dataset.coopAction === 'edit') openCoopModal(id);
+    if (btn.dataset.coopAction === 'delete') deleteCoop(id);
+  });
+}
+
+function openCoopModal(id) {
+  const modal = document.getElementById('coop-modal');
+  const title = document.getElementById('coop-modal-title');
+  if (id) {
+    const coop = DB.getCoops().find(c => c.id === id);
+    if (!coop) return;
+    title.textContent = '编辑合作记录';
+    document.getElementById('coop-id').value = coop.id;
+    document.getElementById('coop-ip-name').value = coop.ipName || '';
+    document.getElementById('coop-ip-info').value = coop.ipInfo || '';
+    document.getElementById('coop-auth-scope').value = coop.authScope || '';
+    document.getElementById('coop-start-date').value = coop.startDate || '';
+    document.getElementById('coop-end-date').value = coop.endDate || '';
+    document.getElementById('coop-progress').value = coop.progress || '初步接触';
+    document.getElementById('coop-note').value = coop.note || '';
+  } else {
+    title.textContent = '新增合作记录';
+    document.getElementById('coop-form').reset();
+    document.getElementById('coop-id').value = '';
+    document.getElementById('coop-progress').value = '初步接触';
+  }
+  modal.style.display = 'flex';
+}
+
+function closeCoopModal() {
+  document.getElementById('coop-modal').style.display = 'none';
+}
+
+function deleteCoop(id) {
+  const coop = DB.getCoops().find(c => c.id === id);
+  if (!coop) return;
+  if (!confirm(`确定要删除「${coop.ipName}」的合作记录吗？`)) return;
+  DB.deleteCoop(id);
+  renderCoopList(document.getElementById('coop-search').value);
+  showToast('已删除', 'error');
+}
+
+function renderCoopList(filter) {
+  const list = DB.getCoops().filter(c =>
+    !filter || (c.ipName || '').toLowerCase().includes(filter.toLowerCase())
+  );
+  const area = document.getElementById('coop-list-area');
+
+  if (list.length === 0) {
+    area.innerHTML = `<div class="empty-state" style="padding:60px 20px;">
+      <p>${filter ? '没有找到匹配的合作记录' : '还没有合作记录，点击「新增合作记录」开始添加'}</p>
+    </div>`;
+    return;
+  }
+
+  area.innerHTML = list.map(c => {
+    const pc = PROGRESS_COLORS[c.progress] || PROGRESS_COLORS['初步接触'];
+    const dateRange = [c.startDate, c.endDate].filter(Boolean).join(' ~ ') || '未设定';
+    return `
+      <div class="coop-card">
+        <div class="coop-card-header">
+          <span class="coop-card-name">${escHtml(c.ipName)}</span>
+          <span class="coop-progress-badge" style="background:${pc.bg};border-color:${pc.border};color:${pc.text};">${escHtml(c.progress)}</span>
+        </div>
+        ${c.ipInfo ? `<div class="coop-section"><span class="coop-section-label">📌 IP信息介绍</span><div class="coop-section-text">${escHtml(c.ipInfo)}</div></div>` : ''}
+        ${c.authScope ? `<div class="coop-section"><span class="coop-section-label">📜 IP授权范围</span><div class="coop-section-text">${escHtml(c.authScope)}</div></div>` : ''}
+        <div class="coop-section"><span class="coop-section-label">📅 合作时间</span><span class="coop-section-text">${escHtml(dateRange)}</span></div>
+        ${c.note ? `<div class="coop-section"><span class="coop-section-label">📝 最新进展</span><div class="coop-section-text">${escHtml(c.note)}</div></div>` : ''}
+        <div class="coop-card-actions">
+          <button class="btn-edit" data-coop-action="edit" data-coop-id="${escHtml(c.id)}">编辑</button>
+          <button class="btn-delete" data-coop-action="delete" data-coop-id="${escHtml(c.id)}">删除</button>
+        </div>
+      </div>`;
+  }).join('');
+}

@@ -121,6 +121,53 @@ const DB = {
         showToast('配置保存失败，存储空间可能不足', 'error');
       }
     }
+  },
+
+  // ===== 合作追踪 =====
+  getCoops() {
+    const raw = localStorage.getItem('coop_list');
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error('合作记录解析失败，已重置', e);
+      localStorage.removeItem('coop_list');
+      return [];
+    }
+  },
+
+  saveCoops(list) {
+    try {
+      localStorage.setItem('coop_list', JSON.stringify(list));
+    } catch (e) {
+      console.error('合作记录保存失败', e);
+      if (typeof showToast === 'function') {
+        showToast('保存失败，存储空间可能不足', 'error');
+      }
+    }
+  },
+
+  addCoop(coop) {
+    const list = this.getCoops();
+    coop.id = crypto.randomUUID();
+    coop.createdAt = new Date().toISOString();
+    list.unshift(coop);
+    this.saveCoops(list);
+    return coop;
+  },
+
+  updateCoop(id, data) {
+    const list = this.getCoops();
+    const idx = list.findIndex(c => c.id === id);
+    if (idx === -1) return false;
+    list[idx] = { ...list[idx], ...data, id };
+    this.saveCoops(list);
+    return true;
+  },
+
+  deleteCoop(id) {
+    const list = this.getCoops().filter(c => c.id !== id);
+    this.saveCoops(list);
   }
 };
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>体竞游IP合作</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <div class="app">
@@ -18,6 +18,10 @@
         <li class="nav-item active" data-page="recommend">
           <span class="nav-icon">✨</span>
           <span>智能匹配</span>
+        </li>
+        <li class="nav-item" data-page="coop">
+          <span class="nav-icon">📋</span>
+          <span>合作追踪</span>
         </li>
       </ul>
     </nav>
@@ -132,10 +136,81 @@
         </div>
       </div>
 
+      <!-- 合作追踪页 -->
+      <div id="page-coop" class="page">
+        <div class="page-header">
+          <h1>合作追踪</h1>
+          <p class="page-desc">管理各IP谈判合作进程与关键信息</p>
+        </div>
+        <div class="manage-toolbar">
+          <button class="btn-primary" id="add-coop-btn" style="width:auto;">+ 新增合作记录</button>
+          <div class="search-box">
+            <input type="text" id="coop-search" placeholder="搜索IP名称…" />
+          </div>
+        </div>
+        <div id="coop-list-area"></div>
+      </div>
+
     </main>
   </div>
 
-  <script src="data.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <!-- 合作追踪编辑弹窗 -->
+  <div id="coop-modal" class="modal" style="display:none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="coop-modal-title">新增合作记录</h3>
+        <button class="modal-close" id="coop-modal-close">✕</button>
+      </div>
+      <form id="coop-form">
+        <input type="hidden" id="coop-id" />
+        <div class="form-group">
+          <label>IP名称 <span class="required">*</span></label>
+          <input type="text" id="coop-ip-name" placeholder="例如：王者荣耀KPL" required />
+        </div>
+        <div class="form-group">
+          <label>IP信息介绍</label>
+          <textarea id="coop-ip-info" rows="3" placeholder="简要介绍该IP的基本情况、用户规模、核心特色等…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>IP授权范围</label>
+          <textarea id="coop-auth-scope" rows="3" placeholder="例如：限定周边设计权、线上社媒传播权、线下活动冠名权，不含赛事转播权…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>合作开始时间</label>
+            <input type="date" id="coop-start-date" />
+          </div>
+          <div class="form-group">
+            <label>合作结束时间</label>
+            <input type="date" id="coop-end-date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>合作进度</label>
+          <select id="coop-progress">
+            <option value="初步接触">初步接触</option>
+            <option value="需求对齐">需求对齐</option>
+            <option value="方案沟通">方案沟通</option>
+            <option value="合同签署">合同签署</option>
+            <option value="执行中">执行中</option>
+            <option value="已完成">已完成</option>
+            <option value="已暂停">已暂停</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>最新进展备注</label>
+          <textarea id="coop-note" rows="2" placeholder="例如：已发送合作方案，等待IP方反馈，预计下周确认权益细节…"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="coop-modal-cancel">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="data.js?v=5"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
